@@ -1,5 +1,8 @@
 setwd('C:\\Users\\harik\\OneDrive\\Documents\\oelp')
 dir()
+
+
+
 library(readr)
 library(dplyr)
 library(tidyr)
@@ -11,7 +14,9 @@ library(chron)
 library(RColorBrewer)
 library(lattice)
 
-file<-nc_open("tasmax_day_GFDL-ESM2M_rcp26_r1i1p1_EWEMBI_20910101-20991231.nc4")
+library(this.path) #This package is used to get the directory of the executing script so that we can use relative paths
+current_directory_of_plotting_script <- this.path::this.dir()
+file<-nc_open(paste0(current_directory_of_plotting_script,"/data/","tasmax_day_GFDL-ESM2M_rcp26_r1i1p1_EWEMBI_20910101-20991231.nc4", sep=""))
 lon<-ncvar_get(file,"lon")
 print(file)
 lat<-ncvar_get(file,"lat")
@@ -22,7 +27,8 @@ tmp.array<-tmp.array-273.15
 tunits<-ncatt_get(file,"time","units")
 tunits
 nc_close(file)
-tmp.slice<-tmp.array[,,180]
+tmp.slice<-tmp.array[,,180]  #  The values are varying 0 to 1 because these are x and y indices and  image is a very basis function.
+levelplot(tmp.array[,,180]) # Use levelplot, it automatically creates legend and you can see that temperature is varying from -60 to +40
 image(tmp.slice)
 image(lon,lat,tmp.slice)
 mapCDFtemp <- function(lat,lon,tas) 
